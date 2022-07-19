@@ -7,5 +7,14 @@ export async function createUser (req : Request, res : Response) {
 
     await userServices.createUser({email, password, confirmPassword});
 
-    res.status(201).send("Criar usuários ativo");
+    res.sendStatus(201);
+}
+
+export async function login (req : Request, res : Response) {
+
+    const {email, password} = req.body;
+
+    const token = await userServices.login({email, password});
+
+    res.status(200).send(token);
 }

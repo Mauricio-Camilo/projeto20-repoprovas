@@ -1,5 +1,10 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 import * as userRepository from "./../repositories/userRepository.js";
+import { CreateSignUpData } from "./../repositories/userRepository.js";
+
+dotenv.config({ path: ".env" });
 
 export interface CreateUserData {
     email: string;
@@ -38,4 +43,39 @@ export function cryptPassword (password : string) {
     const SALT = 10;
     const cryptedPassword = bcrypt.hashSync(password, SALT);
     return cryptedPassword;
+}
+
+export async function login (login : CreateSignUpData) {
+
+    const user = await checkLogin(login);
+
+    const token = jwt.sign({userId : user.id}, process.env.JWT_SECRET);
+
+    return token;
+}
+
+export async function checkLogin (login : CreateSignUpData) {
+
+    const {email, password} = login
+
+    const user = await userRepository.searchUserByEmail(email);
+
+    if (!user) {
+        throw {
+            name: "notFound",
+            message: "User not found"
+        }
+    }
+
+    const checkPassword = bcrypt.compareSync(login.password, user.password);
+
+    if (!checkPassword) {
+        throw {
+            name: "notAuthorized",
+            message: "Incorrect password"
+        }
+    }
+
+    return user;
+
 }
