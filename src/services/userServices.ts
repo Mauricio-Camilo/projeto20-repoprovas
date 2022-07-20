@@ -49,7 +49,7 @@ export async function login (login : CreateSignUpData) {
 
     const user = await checkLogin(login);
 
-    const token = jwt.sign({userId : user.id}, process.env.JWT_SECRET);
+    let token = jwt.sign({userId : user.id}, process.env.JWT_SECRET);
 
     return token;
 }
@@ -78,4 +78,17 @@ export async function checkLogin (login : CreateSignUpData) {
 
     return user;
 
+}
+
+export async function findUserById (id : number) {
+    
+    const user = await userRepository.findById(id);
+    if (!user) {
+        throw {
+            name: "notFound",
+            message: "User not found"
+        }
+    }
+  
+    return user;
 }
