@@ -9,7 +9,7 @@ dotenv.config({ path: ".env" });
 export interface CreateUserData {
     email: string;
     password: string;
-    confirmPassword: string; 
+    confirmPassword: string;
 };
 
 export async function createUser (user : CreateUserData) {
@@ -75,13 +75,11 @@ export async function checkLogin (login : CreateSignUpData) {
             message: "Incorrect password"
         }
     }
-
     return user;
-
 }
 
 export async function findUserById (id : number) {
-    
+
     const user = await userRepository.findById(id);
     if (!user) {
         throw {
@@ -89,6 +87,6 @@ export async function findUserById (id : number) {
             message: "User not found"
         }
     }
-  
+
     return user;
 }
