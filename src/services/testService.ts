@@ -7,8 +7,9 @@ export async function createTest (test : CreateTestData) {
 
     const {categoryId, disciplineId, teacherId} = test;
 
-    /* README: NA VALIDAÇÃO, USAR O DISCIPLINEID E O TEACHERID PRA PROCURAR
-    NA TABELA TEACHERSDISCIPLINES SE EXISTE ESSE PROFESSOR COM ESSA DISCIPLINA */
+    /* README: DUAS VALIDAÇÕES DEVEM SER FEITAS
+    PRIMEIRA: A DISCIPLINA E O PROFESSOR DEVEM EXISTIR NA TABELA DE CORRELAÇÃO
+    SEGUNDA: A CATEGORIA E A DISCIPLINA DEVEM EXISTIR NA TABELA DE CORRELAÇÃO*/
 
     await validateTest(categoryId, disciplineId ,teacherId);
 
@@ -17,16 +18,16 @@ export async function createTest (test : CreateTestData) {
 
 export async function validateTest (categoryId : number, disciplineId : number, teacherId : number ) {
 
-    const checkCategoryId = await testRepository.findByCategoryId(categoryId);
-    if (!checkCategoryId) {
+    const checkCategoryDiscipline = await testRepository.findByCategoryDisciplineId(categoryId, disciplineId);
+    if (!checkCategoryDiscipline) {
         throw {
             name: "notFound",
-            message: "category not found"
+            message: "This discipline has not tests related with this category"
         }
     }
-    const checkteacherDisciplineId = await testRepository.findByteacherDisciplineId(disciplineId,teacherId);
+    const checkteacherDiscipline = await testRepository.findByteacherDisciplineId(disciplineId,teacherId);
 
-    if (!checkteacherDisciplineId) {
+    if (!checkteacherDiscipline) {
         throw {
             name: "notFound",
             message: "This teacher is not related with this discipline"
