@@ -1,6 +1,23 @@
 import prisma from "./../config/database.js";
 import { CreateTestData } from "../services/testService.js";
 
+export async function findByCategoryId (id : number) {
+   return await prisma.category.findFirst({
+        where: {id}
+    })
+}
+
+export async function findByDisciplineId (id : number) {
+    return await prisma.discipline.findFirst({
+         where: {id}
+     })
+ }
+ export async function findByTeacherId (id : number) {
+    return await prisma.teacher.findFirst({
+         where: {id}
+     })
+ }
+ 
 export async function findByCategoryDisciplineId (categoryId : number, disciplineId : number) {
     const checkteacherDiscipline = await prisma.disciplinesCategories.findFirst(
         {where : {
