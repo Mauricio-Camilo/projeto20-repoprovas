@@ -71,3 +71,10 @@ export async function getTestsByDiscipline () {
     
     return tests;
 }
+
+export async function getTestsByTeachers () {
+    
+    const tests = await testRepository.getTestsByTeachers();
+    
+    return tests;
+}

@@ -11,15 +11,6 @@ export function createSignUp (email = "teste1@teste.com", passwordLength = 8) {
     })
 }
 
-export function wrongSignUp (email = "teste1@teste.com", passwordLength = 8) {
-    const password = faker.internet.password(passwordLength);
-    return ({
-        email,
-        password,
-        confirmPassword: "wrongPassword"
-    })
-}
-
 export function createLogin (email = "teste1@teste.com", passwordLength = 8) {
     const password = faker.internet.password(passwordLength);
     return ({

@@ -15,7 +15,14 @@ export async function getTestsByDiscipline (req : Request, res : Response) {
     const tests = await testService.getTestsByDiscipline();
 
     res.send(tests);
-
 }
+
+export async function getTestsByTeachers (req : Request, res : Response) {
+
+    const tests = await testService.getTestsByTeachers();
+
+    res.send(tests);
+}
+
 
 
