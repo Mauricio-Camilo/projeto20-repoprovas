@@ -2,56 +2,75 @@ import prisma from "./../src/config/database.js";
 import supertest from "supertest";
 import app from "./../src/app.js";
 import dotenv from "dotenv";
+import * as userFactory from "./factories/userFactory.js"
 
 dotenv.config();
 
-const EMAIL = "teste1@email.com";
-const PASSWORD = "abcde";
-const CONFIRMPASSWORD = "abcde";
-const WRONGPASSWORD = "12345";
-
-const signup = {email: EMAIL, password: PASSWORD, confirmPassword: CONFIRMPASSWORD};
-const login = {email: EMAIL, password: PASSWORD};
-const wrongSignup = {email: EMAIL, password: PASSWORD, confirmPassword: WRONGPASSWORD};
-const wrongLogin = {email: EMAIL, password: WRONGPASSWORD};
+beforeEach(async () => {
+    await prisma.$executeRaw`DELETE FROM users WHERE email = 'teste1@teste.com'`;
+})
 
 describe("User tests suite", () => {
 
     it("given email and password, create user", async () => {
-        await prisma.$executeRaw`DELETE FROM users WHERE email = 'teste1@email.com'`;
-
+        const signup = userFactory.createSignUp();
         const response = await supertest(app).post("/signup").send(signup);
         expect (response.statusCode).toBe(201);
 
-        const user = await prisma.user.findUnique({where : {email: login.email}});
-        expect(user.email).toBe(login.email);
+        const user = await prisma.user.findFirst({where : {email: signup.email}});
+        expect(user.email).toBe(signup.email);
     });
 
-    it("given email and password, login the user", async () => {
-        const response = await supertest(app).post("/signin").send(login);
+    it("given email and password, login the user and receive token", async () => {
+        const login = userFactory.createLogin();
+        const user = await userFactory.createUser(login);
+
+        const response = await supertest(app).post("/signin").send(user);
+        expect(response.statusCode).toBe(200);
+
         const token = response.text;
         expect(token).not.toBeUndefined();
     })
 
+    it("given invalid inputs, fail to create user", async () => {
+        const signup = userFactory.createSignUp("teste_email.com");
+        delete signup.password
+        const response = await supertest(app).post("/signup").send(signup);
+        expect(response.statusCode).toBe(422);
+    })
+
     it("given email already in use, fail to create user", async () => {
-      const response = await supertest(app).post("/signup").send(signup);
-      expect (response.statusCode).toBe(409);
+        const login = userFactory.createLogin();
+        await userFactory.createUser(login);
+
+        const signup = userFactory.createSignUp();
+        const response = await supertest(app).post("/signup").send(signup);
+        expect (response.statusCode).toBe(409);
     })
 
     it("given incorrect password confirmation, fail to create user", async () => {
-        await prisma.$executeRaw`DELETE FROM users WHERE email = 'teste1@email.com'`;
-        const response = await supertest(app).post("/signup").send(wrongSignup);
+        const signup = userFactory.createSignUp();
+        signup.confirmPassword = "wrongPassword";
+
+        const response = await supertest(app).post("/signup").send(signup);
         expect (response.statusCode).toBe(422);
     })
 
     it("given inexistent email, fail to login the user", async () => {
-        const response = await supertest(app).post("/signin").send(login);
+        const login = userFactory.createLogin();
+        const user = await userFactory.createUser(login);    
+        
+        user.email = "wrongemail@email.com"
+        const response = await supertest(app).post("/signin").send(user);
         expect (response.statusCode).toBe(404);
     })
 
     it("given incorrect password, fail to login the user", async () => {
-        await supertest(app).post("/signup").send(signup);
-        const response = await supertest(app).post("/signin").send(wrongLogin);
+        const login = userFactory.createLogin();
+        const user = await userFactory.createUser(login); 
+
+        user.password = "wrongpassword"
+        const response = await supertest(app).post("/signin").send(user);
         expect (response.statusCode).toBe(401);
     })
 })
