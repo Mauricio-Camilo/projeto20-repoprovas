@@ -16,8 +16,6 @@ export async function createUser (user : CreateUserData) {
 
     const {email, password, confirmPassword} = user;
 
-    // PERGUNTAR SE PRECISA DESSA CONFIRMAÇÃO
-
     if (password !== confirmPassword) {
         throw {
             name: "validationError",
