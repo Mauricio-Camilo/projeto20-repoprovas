@@ -7,7 +7,7 @@ import { validateSchema } from "./../middlewares/schemaValidator.js"
 const testsRouter = Router();
 
 testsRouter.post("/tests",validateToken, validateSchema(testSchema), createTest);
-testsRouter.get("/tests/disciplines",validateToken, getTestsByDiscipline);
+testsRouter.get("/tests",validateToken, getTestsByDiscipline);
 testsRouter.get("/tests/teachers",validateToken, getTestsByTeachers);
 
 export default testsRouter;

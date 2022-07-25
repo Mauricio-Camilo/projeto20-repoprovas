@@ -53,13 +53,13 @@ const teachersCategories = [
 ]
 
 async function main () {
-    // await prisma.term.createMany({data : terms});
-    // await prisma.discipline.createMany({data : disciplines});
-    // await prisma.category.createMany({data : categories});
-    // await prisma.teacher.createMany({data : teachers});
-    // await prisma.teachersDisciplines.createMany({data : teachersDisciplines});
-    // await prisma.disciplinesCategories.createMany({data : disciplinesCategories});
-    // await prisma.teachersCategories.createMany({data : teachersCategories});
+    await prisma.term.createMany({data : terms});
+    await prisma.discipline.createMany({data : disciplines});
+    await prisma.category.createMany({data : categories});
+    await prisma.teacher.createMany({data : teachers});
+    await prisma.teachersDisciplines.createMany({data : teachersDisciplines});
+    await prisma.disciplinesCategories.createMany({data : disciplinesCategories});
+    await prisma.teachersCategories.createMany({data : teachersCategories});
 }
 
 main().catch(e => {

@@ -16,7 +16,7 @@ describe("User tests suite", () => {
 
     it("given email and password, create user", async () => {
         const signup = userFactory.createSignUp();
-        const response = await supertest(app).post("/signup").send(signup);
+        const response = await supertest(app).post("/sign-up").send(signup);
         expect (response.statusCode).toBe(201);
 
         const user = await prisma.user.findFirst({where : {email: signup.email}});
@@ -27,7 +27,7 @@ describe("User tests suite", () => {
         const login = userFactory.createLogin();
         const user = await userFactory.createUser(login);
 
-        const response = await supertest(app).post("/signin").send(user);
+        const response = await supertest(app).post("/sign-in").send(user);
         expect(response.statusCode).toBe(200);
 
         const token = response.text;
@@ -38,7 +38,7 @@ describe("User tests suite", () => {
         const signup = userFactory.createSignUp("teste_email.com");
         delete signup.password;
 
-        const response = await supertest(app).post("/signup").send(signup);
+        const response = await supertest(app).post("/sign-up").send(signup);
         expect(response.statusCode).toBe(422);
     })
 
@@ -47,7 +47,7 @@ describe("User tests suite", () => {
         await userFactory.createUser(login);
 
         const signup = userFactory.createSignUp();
-        const response = await supertest(app).post("/signup").send(signup);
+        const response = await supertest(app).post("/sign-up").send(signup);
         expect (response.statusCode).toBe(409);
     })
 
@@ -55,7 +55,7 @@ describe("User tests suite", () => {
         const signup = userFactory.createSignUp();
         signup.confirmPassword = "wrongPassword";
 
-        const response = await supertest(app).post("/signup").send(signup);
+        const response = await supertest(app).post("/sign-up").send(signup);
         expect (response.statusCode).toBe(422);
     })
 
@@ -64,7 +64,7 @@ describe("User tests suite", () => {
         const user = await userFactory.createUser(login);    
         
         user.email = "wrongemail@email.com"
-        const response = await supertest(app).post("/signin").send(user);
+        const response = await supertest(app).post("/sign-in").send(user);
         expect (response.statusCode).toBe(404);
     })
 
@@ -73,7 +73,7 @@ describe("User tests suite", () => {
         const user = await userFactory.createUser(login); 
 
         user.password = "wrongpassword"
-        const response = await supertest(app).post("/signin").send(user);
+        const response = await supertest(app).post("/sign-in").send(user);
         expect (response.statusCode).toBe(401);
     })
 })
@@ -82,7 +82,7 @@ async function generateToken () {
     const login = userFactory.createLogin();
     const user = await userFactory.createUser(login);
 
-    const response = await supertest(app).post("/signin").send(user);
+    const response = await supertest(app).post("/sign-in").send(user);
     const token = response.text;
     return token;
 }
@@ -134,11 +134,11 @@ describe("Test tests suite", () => {
         const test = testFactory.createTestData();
         await testFactory.saveTest(test);
 
-        const response = await supertest(app).get("/tests/disciplines").send(test).set("Authorization", `Bearer ${token}`);
+        const response = await supertest(app).get("/tests").send(test).set("Authorization", `Bearer ${token}`);
         expect(response.body).not.toBeNull();
     })
 
-    it("get tests by disciplines", async () => {
+    it("get tests by teachers", async () => {
         const token = await generateToken();
 
         const test = testFactory.createTestData();

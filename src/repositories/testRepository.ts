@@ -42,20 +42,16 @@ export async function createTest (test : CreateTestData) {
 
 export async function getTestsByDiscipline () {
     return await prisma.term.findMany({
-        select: {id: true, number: true, 
-            disciplines: {select: {id: true, name: true,
+        select: {number: true, 
+            disciplines: {select: {name: true,
                 disciplinesCategories: {select: {
-                    categories: {select: {id: true, name: true, 
-                        tests: {select: {id: true, name: true,}}
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-    })
-}
+                    categories: {select: {name: true, 
+                        tests: {select: {name: true, pdfUrl: true}}
+                    }}
+                }}
+            }}
+        }}
+    )}
 
 export async function getTestsByTeachers () {
     return await prisma.teacher.findMany({
