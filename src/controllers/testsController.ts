@@ -7,7 +7,7 @@ export async function createTest (req : Request, res : Response) {
 
     await testService.createTest({name, pdfUrl, categoryId, disciplineId, teacherId});
    
-    res.status(201).send("Rota de testes")
+    res.sendStatus(201)
 }
 
 export async function getTestsByDiscipline (req : Request, res : Response) {

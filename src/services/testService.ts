@@ -7,10 +7,6 @@ export async function createTest (test : CreateTestData) {
 
     const {categoryId, disciplineId, teacherId} = test;
 
-    /* README: DUAS VALIDAÇÕES DEVEM SER FEITAS
-    PRIMEIRA: A DISCIPLINA E O PROFESSOR DEVEM EXISTIR NA TABELA DE CORRELAÇÃO
-    SEGUNDA: A CATEGORIA E A DISCIPLINA DEVEM EXISTIR NA TABELA DE CORRELAÇÃO*/
-
     await validateIds(categoryId, disciplineId ,teacherId);
 
     await validateTest(categoryId, disciplineId ,teacherId);
@@ -59,10 +55,6 @@ export async function validateTest (categoryId : number, disciplineId : number, 
             message: "This teacher is not related with this discipline"
         }
     }
-
-    /* FAZER UMA VALIDAÇÃO PRA IMPEDIR DE COLOCAR O MESMO NOME DE PROVA SE OS IDS
-    DA CATEGORIA E PROFESSOR FOREM IGUAS
-    */
 }
 
 export async function getTestsByDiscipline () {
